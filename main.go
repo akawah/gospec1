@@ -1,28 +1,58 @@
 package main
 
+import "fmt"
+
 func main() {
 
-	/////////////////////////////////// 3
+	/////////////////////////////////// 4
+	originArr := [...]int{30, 40, 50, 60, 70, 80}
+	firstSlice := originArr[1:4]
+	for i, _ := range firstSlice {
+		firstSlice[i]++
+	}
+	fmt.Println("OriginArr:", originArr)
+	fmt.Println("FirstSlice:", firstSlice)
 
-	// --
+	fSlice := originArr[:]
+	sSlice := originArr[2:5]
 
+	fmt.Println("Befor modification: Arr:", originArr, "fSlice:", fSlice, "sSlice:", sSlice)
+	fSlice[3]++
+	sSlice[1]++
+	fmt.Println("After modification: Arr:", originArr, "fSlice:", fSlice, "sSlice:", sSlice)
+	/*
+		arr := [...]float64{12.54, 23, 11.1, 19.43, 83.00}
+		for i := 0; i < len(arr); i++ {
+			fmt.Printf("El %d = %.2f\n", i, arr[i])
+		}
+
+		var sum float64
+		for _, val := range arr {
+			sum += val
+		}
+		fmt.Println("Сумма эл-тов:", sum)
+
+		var arr3 [5]int
+		fmt.Println("Это массив:", arr3)
+	*/
 	/////////////////////////////////// 2.5
 	// if
-	// var val int
-	// fmt.Scan(&val)
+	/*
+		var val int
+		fmt.Scan(&val)
 
-	// if val%2 == 0 {
-	// 	fmt.Println("Чётное")
-	// } else {
-	// 	fmt.Println("Нечётное")
-	// }
+		if val%2 == 0 {
+			fmt.Println("Чётное")
+		} else {
+			fmt.Println("Нечётное")
+		}
 
-	// if num := 10; num%2 == 0 {
-	// 	fmt.Println("EVEN")
-	// } else {
-	// 	fmt.Println("ODD")
-	// }
-
+		if num := 10; num%2 == 0 {
+			fmt.Println("EVEN")
+		} else {
+			fmt.Println("ODD")
+		}
+	*/
 	//
 	//
 	//
