@@ -1,9 +1,5 @@
 package main
 
-import (
-	"fmt"
-)
-
 func main() {
 
 	/////////////////////////////////// 3
@@ -12,20 +8,20 @@ func main() {
 
 	/////////////////////////////////// 2.5
 	// if
-	var val int
-	fmt.Scan(&val)
+	// var val int
+	// fmt.Scan(&val)
 
-	if val%2 == 0 {
-		fmt.Println("Чётное")
-	} else {
-		fmt.Println("Нечётное")
-	}
+	// if val%2 == 0 {
+	// 	fmt.Println("Чётное")
+	// } else {
+	// 	fmt.Println("Нечётное")
+	// }
 
-	if num := 10; num%2 == 0 {
-		fmt.Println("EVEN")
-	} else {
-		fmt.Println("ODD")
-	}
+	// if num := 10; num%2 == 0 {
+	// 	fmt.Println("EVEN")
+	// } else {
+	// 	fmt.Println("ODD")
+	// }
 
 	//
 	//
