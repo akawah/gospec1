@@ -5,25 +5,32 @@ import (
 )
 
 func main() {
-	var m int
-	fmt.Scanln(&m)
-	var prime bool = true
+	var n, sum int
 
-	for i := 1; i <= m/2; i++ {
-		if m%i == 0 {
-			fmt.Printf("%d ", i)
-			if i != 1 {
-				prime = false
-			}
+	fmt.Scanln(&n)
+	slArr := []int{}
+
+	for i := 0; i < n; i++ {
+		var el int
+		fmt.Scanln(&el)
+		slArr = append(slArr, el)
+	}
+
+	for i := 0; i < n; i++ {
+		if i%2 != 0 {
+			slArr[i] = -slArr[i]
 		}
+		sum += slArr[i]
 	}
-	fmt.Printf("%d\n", m)
-	if prime && m != 1 {
-		fmt.Println("ACHTUNG")
-	}
+	fmt.Println(sum)
 }
 
-// m, _ := strconv.Atoi(os.Args[1])
+/*
+myWords = append(myWords, anotherSlice...)
+1
+ 1 1
+1 2 1
+*/
 // https://contest.yandex.ru/contest/25606/problems/   ready
 // https://contest.yandex.ru/contest/25622/problems/G/
 // https://contest.yandex.ru/contest/19034/problems/ финальное задание
