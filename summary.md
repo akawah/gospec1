@@ -757,8 +757,307 @@ func main() {
 ```
 
 
+
+```
+package main
+
+import (
+	"fmt"
+	"unicode/utf8"
+)
+
+func main() {
+	name := "Hello world"
+	fmt.Println(name)
+
+	//1. Строка - это байтовый слайс со своими особенносятми при обращении
+	//к нижелажащему массиву
+	word := "Тестовая строка"
+	fmt.Printf("String %s\n", word)
+	// Какие значения байт сейчас находятся в слайсе word?
+	fmt.Printf("Bytes: ")
+	for i := 0; i < len(word); i++ {
+		fmt.Printf("%x ", word[i]) //%x - формат представления 16-ти ричного байта
+	}
+	fmt.Println()
+	// Каким образом получать доступ к отдельно стоящим символам?
+	fmt.Printf("Characters: ")
+	for i := 0; i < len(word); i++ {
+		fmt.Printf("%c ", word[i]) //%c - формат представления символа
+	}
+	fmt.Println()
+	//2. Строки в Go - хранятся как наборы UTF-8символов. Каждый символ, вообще говоря, может занимать
+	// больше чем 1 байт
+
+	//3. Руна (Rune) - это стандартный встроенный тип в Go (alias над int32), позволяющий хранить
+	//единый неделимый UTF символ ВНЕ ЗАВИСИМОСТИ ОТ ТОГО сколько байт он занимает
+	fmt.Printf("Runes: ")
+	runeSlice := []rune(word) // Преобразование слайса байт к слайсу рун []byte(sliceRune)
+	for i := 0; i < len(runeSlice); i++ {
+		fmt.Printf("%c ", runeSlice[i])
+	}
+	fmt.Println()
+	//4. Итерирование по строке с использованием рун
+	for id, runeVal := range word { // id - это индекс байта, с КОТОРОГО НАЧИНАЕТСЯ РУНА runeVal
+		fmt.Printf("%c starts at postion %d\n", runeVal, id)
+	}
+
+	//5. Создание строки из слайса байт
+	myByteSlice := []byte{0x40, 0x41, 0x42, 0x43} // Исходное представление байтов
+	myStr := string(myByteSlice)
+	fmt.Println(myStr)
+
+	myDecimalByteSlice := []byte{100, 101, 102, 103} // Синтаксический сахар - можно использовать десятичное представление байтов
+	myDecimalStr := string(myDecimalByteSlice)
+	fmt.Println(myDecimalStr)
+
+	//6. Создание строки из слайса рун
+	// Руны как hex
+	runeHexSlice := []rune{0x45, 0x46, 0x47, 0x48}
+	myStrFromRune := string(runeHexSlice)
+	fmt.Println("From Runes(hex):", myStrFromRune)
+	// Руны как литералы
+	runeLiteralSlice := []rune{'V', 'a', 's', 'y', 'a'} // '' - таким образом обозначается руна
+	myStrFromRuneLiterals := string(runeLiteralSlice)
+	fmt.Println("From Runes(literals):", myStrFromRuneLiterals)
+
+	fmt.Printf("%s and %T\n", myStrFromRuneLiterals, myStrFromRuneLiterals)
+
+	//7. Длина и емкость строки
+	// Длина len() - количество байт в слайсе
+	fmt.Println("Length of Вася:", len("Вася"), "bytes")
+	// Длина RuneCounter - количество !рун!
+	fmt.Println("Length of Вася:", utf8.RuneCountInString("Вася"), "runes")
+	// Вычисление емкости строки - бессмысленно, т.к. строка базовый тип
+	fmt.Println(cap([]rune("Вася")))
+
+	//8. Сравнение строк == и !=. Начиная с go 1.6
+	word1, word2 := "Вася", "Петя"
+	if word1 == word2 {
+		fmt.Println("Equal")
+	} else {
+		fmt.Println("Not equal")
+	}
+
+	//9. Конкатенация
+	word3 := word1 + word2
+	fmt.Println(word3)
+
+	//10. Строитель строк (java -> StringBuiler)
+	firstName := "Alex"
+	secondName := "Johnson"
+	fullName := fmt.Sprintf("%s #### %s", firstName, secondName)
+	fmt.Println("FullName:", fullName)
+
+	//11. Строки не изменяемые
+	// fullName[0] = "Q"
+
+	//12. А слайсы изменяемые :)
+	fullNameSlice := []rune(fullName)
+	fullNameSlice[0] = 'F'
+	fullName = string(fullNameSlice)
+	fmt.Println("String mutation:", fullName)
+
+	//13. Сравнение рун
+	if 'Q' == 'Q' {
+		fmt.Println("Runes equal")
+	} else {
+		fmt.Println("Runes not equal")
+	}
+
+	//14. Где живут полезные методы работы со строками?
+	// import "strings"
+
+}
+```
+
+```
+package main
+
+import (
+	"bufio"
+	"fmt"
+	"os"
+	"strconv"
+)
+
+func main() {
+	var name string
+	input := bufio.NewScanner(os.Stdin)
+	if input.Scan() { // Команда захвата потока ввода и сохранения в буфер (захват идет до символа окончания строки)
+		name = input.Text() // Команда возвращения элементов, помещенных в буфер (отдаст string)
+	}
+	fmt.Println(name)
+
+	fmt.Println("For loop started:")
+	for {
+		if input.Scan() {
+			result := input.Text()
+			if result == "" {
+				break
+			}
+			fmt.Println("Input string is:", result)
+		}
+	}
+
+	//Преоброазование строкового литерала к чему-нибудь числовому
+	numStr := "10"
+	numInt, _ := strconv.Atoi(numStr) // Atoi - Anything to Int (именно int)
+	fmt.Printf("%d is %T\n", numInt, numInt)
+
+	numInt64, _ := strconv.ParseInt(numStr, 10, 64)
+	numFloat32, _ := strconv.ParseFloat(numStr, 32) // Но это 64-разрядное число будет без проблем ГАРАНТИРОВАНО ПРЕВОДИТЬСЯ К 32
+	fmt.Println(numInt64, numFloat32)
+	fmt.Printf("%.3f and %T\n", numFloat32, float32(numFloat32))
+
+}
+```
+
+```
+package main
+
+import "fmt"
+
+func main() {
+	//1. Map - это набор пар ключ:значение. Инициализация пустой мапы
+	mapper := make(map[string]int)
+	fmt.Println("Empty map:", mapper)
+
+	//2. Добавление пар в существующую мапу
+	mapper["Alice"] = 24
+	mapper["Bob"] = 25
+	fmt.Println("Mapper after adding pairs:", mapper)
+
+	//3. Инициализация мапы с указанием пар
+	newMapper := map[string]int{
+		"Alice": 1000,
+		"Bob":   1000,
+	}
+	newMapper["Jo"] = 3000
+	fmt.Println("New Mapper:", newMapper)
+
+	//4. Что может быть включом в мапе?
+	//4.1 ВАЖНО: Мапа НЕ УПОРЯДОЧЕНА В GO
+	//4.2 КЛЮЧОМ В МАПЕ МОЖЕТ БЫТЬ ТОЛЬКО СРАВНИМЫЙ ТИП (==, !=)
+
+	//5. Нулевое значение для map
+	// var mapZeroValue map[string]int // mapZeroValue == nil
+	// mapZeroValue["Alice"] = 12
+
+	//6. Получение элементов из map
+	//6.1 Получение элемента, который представлен в мапе
+	testPerson := "Alice"
+	fmt.Println("Salary of testPerson:", newMapper[testPerson])
+	//6.2 Получение элемента, который НЕ представлен в мапе
+	testPerson = "Derek"
+	fmt.Println("Salary of new testPerson:", newMapper[testPerson]) // При обращении по несуществующему ключу - новая пара не добавляется
+	fmt.Println(newMapper)
+
+	//7. Проверка вхождения ключа
+	employee := map[string]int{
+		"Den":   0,
+		"Alice": 0,
+		"Bob":   0,
+	}
+
+	//7.1 При обращении по ключу - возвращается 2 значения
+	if value, ok := employee["Den"]; ok {
+		fmt.Println("Den and value:", value)
+	} else {
+		fmt.Println("Den does not exists in map")
+	}
+
+	if value, ok := employee["Jo"]; ok {
+		fmt.Println("Jo and value:", value)
+	} else {
+		fmt.Println("Jo does not exists in map")
+	}
+
+	//8. Перебор элементов мапы
+	fmt.Println("==============================")
+	for key, value := range employee {
+		fmt.Printf("%s and value %d\n", key, value)
+	}
+
+	//9. Как удалять пары
+	//9.1 Удаление существующей пары
+	fmt.Println("Before deleting:", employee)
+	delete(employee, "Den")
+	fmt.Println("After first deleting:", employee)
+
+	//9.2 Удаление не существующей пары
+	if _, ok := employee["Anna"]; ok {
+		delete(employee, "Anna") // ОЧЕНЬ ДОРОГАЯ ОПЕРАЦИЯ
+	}
+
+	fmt.Println("After second deleting:", employee)
+
+	//10. Количество пар == длина мапы
+	fmt.Println("Pair amount in map:", len(employee))
+
+	//11. Мапа (как и слайс) ссылочный тип
+	words := map[string]string{
+		"One": "Один",
+		"Two": "Два",
+	}
+
+	newWords := words
+	newWords["Three"] = "Три"
+	delete(newWords, "One")
+	fmt.Println("words map:", words)
+	fmt.Println("newWords map:", newWords)
+
+	//12 . Сравнение мап
+	//12.1 Сравнение массивов (массив можно использовать как ключ в мапе)
+	if [3]int{1, 2, 3} == [3]int{1, 2, 3} {
+		fmt.Println("Equal")
+	} else {
+		fmt.Println("Not equal")
+	}
+	//12.2 Сравнение слайсов. Слайсы (из-за того что тип ссылочный - можно сравнить на равенство только с nil)
+	// if []int{1, 2, 3} == []int{1, 2, 3} {
+	// 	fmt.Println()
+	// }
+
+	//12.3 Сравнение мап.  Мапа (из-за того, что тип ссылочный - можно сравнивать только с nil)
+	aMap := map[string]int{
+		"a": 1,
+	}
+	var bMap map[string]int
+
+	if aMap == nil {
+		fmt.Println("Zero value map")
+	}
+
+	if bMap == nil {
+		fmt.Println("Zero value of map bMap")
+	}
+
+	//13. Грустное следствие
+	// Если мапа/слайс являются составляющими какой-либо структуры - структура автоматически не сравнима
+
+}
+```
+
+<!-- 05 Lec11 -->
+
+
+```
+
+```
+
+```
+
+```
+
+```
+
+```
+
+```
+
+```
+
+
+
 <!-- markdown-pdf -o summary.pdf summary.md -->
-
-```
-
-```

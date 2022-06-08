@@ -1,38 +1,44 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"os"
+	"strings"
+	"unicode/utf8"
 )
 
 func main() {
-	var n, sum int
-
-	fmt.Scanln(&n)
-	slArr := []int{}
-
-	for i := 0; i < n; i++ {
-		var el int
-		fmt.Scanln(&el)
-		slArr = append(slArr, el)
+	var str string
+	input := bufio.NewScanner(os.Stdin)
+	if input.Scan() {
+		str = strings.TrimSpace(input.Text())
 	}
-
-	for i := 0; i < n; i++ {
-		if i%2 != 0 {
-			slArr[i] = -slArr[i]
-		}
-		sum += slArr[i]
-	}
-	fmt.Println(sum)
+	// fmt.Println('д')
+	runeStr := []rune(str)
+	fmt.Println(runeStr)
+	fmt.Println(runeStr[0])
+	fmt.Println(runeStr[utf8.RuneCountInString(str)-1])
+//11. Строки не изменяемые
+// fullName[0] = "Q"
+//12. А слайсы изменяемые :)
+fullNameSlice := []rune(fullName)
+fullNameSlice[0] = 'F'
+fullName = string(fullName
 }
 
 /*
-myWords = append(myWords, anotherSlice...)
+4
+Сходить в зал
+Собрать портфель
+Погладить вещи
+Почитать книгу
+2
+4
 1
- 1 1
-1 2 1
 */
 // https://contest.yandex.ru/contest/25606/problems/   ready
-// https://contest.yandex.ru/contest/25622/problems/G/
+// https://contest.yandex.ru/contest/25622/problems/
 // https://contest.yandex.ru/contest/19034/problems/ финальное задание
 /*
 

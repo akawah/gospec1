@@ -1,25 +1,66 @@
 package main
 
-import "fmt"
-
 func main() {
 
+	/////////////////////////////////// 5
+
+	/*
+			var name string
+			input := bufio.NewScanner(os.Stdin)
+			if input.Scan() {
+				name = input.Text()
+			}
+			if name == "" {
+				fmt.Println("empty")
+				return
+			}
+			fmt.Println(name)
+
+		numStr := "500"
+		num, _ := strconv.ParseInt(numStr, 10, 64)
+
+		fmt.Println(num)
+	*/
+	/*
+		word := "Привет, мир!"
+
+		fmt.Println(word)
+
+		for i := 0; i < len(word); i++ {
+			fmt.Printf("%x ", word[i])
+		}
+		fmt.Println()
+
+		for i := 0; i < len(word); i++ {
+			fmt.Printf("%c ", word[i])
+		}
+		fmt.Println()
+
+		runeSlice := []rune(word)
+		for i := 0; i < len(runeSlice); i++ {
+			fmt.Printf("%c ", runeSlice[i])
+		}
+		fmt.Println()
+	*/
 	/////////////////////////////////// 4
-	originArr := [...]int{30, 40, 50, 60, 70, 80}
-	firstSlice := originArr[1:4]
-	for i, _ := range firstSlice {
-		firstSlice[i]++
-	}
-	fmt.Println("OriginArr:", originArr)
-	fmt.Println("FirstSlice:", firstSlice)
+	/*
+		originArr := [...]int{30, 40, 50, 60, 70, 80}
+		firstSlice := originArr[1:4]
+		for i, _ := range firstSlice {
+			firstSlice[i]++
+		}
+		fmt.Println("OriginArr:", originArr)
+		fmt.Println("FirstSlice:", firstSlice)
 
-	fSlice := originArr[:]
-	sSlice := originArr[2:5]
+		fSlice := originArr[:]
+		sSlice := originArr[2:5]
 
-	fmt.Println("Befor modification: Arr:", originArr, "fSlice:", fSlice, "sSlice:", sSlice)
-	fSlice[3]++
-	sSlice[1]++
-	fmt.Println("After modification: Arr:", originArr, "fSlice:", fSlice, "sSlice:", sSlice)
+		fmt.Println("Befor modification: Arr:", originArr, "fSlice:", fSlice, "sSlice:", sSlice)
+		fSlice[3]++
+		sSlice[1]++
+		fmt.Println("After modification: Arr:", originArr, "fSlice:", fSlice, "sSlice:", sSlice)
+	*/
+
 	/*
 		arr := [...]float64{12.54, 23, 11.1, 19.43, 83.00}
 		for i := 0; i < len(arr); i++ {
