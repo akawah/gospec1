@@ -1039,24 +1039,608 @@ func main() {
 }
 ```
 
-<!-- 05 Lec11 -->
+
+
+```
+package main
+
+import "fmt"
+
+//1. Явная функция - локально-определенный блок кода , имеющий имя (ЯВНОЕ ОПРЕДЕЛЕНИЕ)
+// Функцию необходимо определить + Функциию необходимо вызвать
+//2. Сигнатура функций и их определение
+// func functionName(params type) typeReturnValue {
+// 	//body
+// }
+
+func main() {
+	fmt.Println("Hello world")
+	//4. Вызов простейшей функции
+	res := add(10, 20)
+	fmt.Println("Result of add(10, 20):", res)
+	fmt.Println("Result of mult(1, 2, 3, 4):", mult(1, 2, 3, 4))
+	per, area := rectangleParameters(10.5, 10.5)
+	newPer, _ := rectangleParameters(10, 10)
+	fmt.Println("Area of rect(10.5, 10.5):", area)
+	fmt.Println("Perimeter of rect(10.5, 10.5):", per)
+	fmt.Println("NewPer:", newPer)
+	secondPer, secondArea := namedReturn(10, 20)
+	fmt.Println(secondArea, secondPer)
+	emptyReutrn(10)
+	helloVariadic(10, 20, 30, 40, 50, 60, 60)
+	helloVariadic()
+	someStrings(2, 3)
+	sum1 := sumVariadic(10, 30, 40, 50, 60)
+	sliceNumber := []int{10, 20, 30}
+	sum2 := sumVariadic(sliceNumber...)
+	fmt.Println(sum1, sum2)
+
+	fmt.Println(sumSlice([]int{30, 40, 50, 60, 80, 90, 100}))
+	fmt.Println(sumSlice(sliceNumber))
+
+	//12. Анонимная функция (синтаксис)
+	anon := func(a, b int) int {
+		return a + b
+	}
+
+	fmt.Println("Anon:", anon(20, 30))
+	fmt.Println("BigFunction(10, 20):", bigFunction(10, 20))
+
+}
+
+//13. Анонимная функция внутри явной
+func bigFunction(aArg, bArg int) int {
+	return func(a, b int) int { return a + b + 1 }(aArg, bArg)
+}
+
+//3. Простейшая функция (определить функцию можно как до момента ее вызова в функции main,
+// так и в любом месте пакета, главное чтобы она была определена в принципе где-нибудь)
+func add(a int, b int) int {
+	result := a + b
+	return result
+}
+
+//4. Функция с однотипными параметрами
+func mult(a, b, c, d int) int {
+	result := a * b * c * d
+	return result
+}
+
+//5. Возврат больше чем одного значения (returnType1, returnType2.......)
+func rectangleParameters(length, width float64) (float64, float64) {
+	var perimeter = 2 * (length + width)
+	var area = length * width
+
+	return perimeter, area
+}
+
+//6. Именованный возврат значений
+func namedReturn(a, b int) (perimeter int32, area int) {
+	perimeter = int32(2 * (a + b))
+	area = a * b
+	return // Не нужно указывать возвращаемые переменные
+}
+
+//7. При вызове оператора return функцию прекращает свое выполнение и возвращает что-то
+func funcWithReturn(a, b int) (int, bool) {
+	if a > b {
+		return a - b, true
+	}
+
+	if a == b {
+		return a, true
+	}
+
+	return 0, false
+}
+
+//8. Что вернется в случае, если return в принципе не указан (или он пустой)
+func emptyReutrn(a int) {
+	fmt.Println("I'M emptyReturn with parameter:", a)
+}
+
+//9. Variadic parameters (континуальные параметры)
+func helloVariadic(a ...int) {
+	fmt.Printf("value %v and type %T\n", a, a)
+}
+
+//10. Смешение параметров с variadic (
+// 	1. Континуальынй параметр всегда самый последний
+//  2. Variadic параметр - на всю функцию один (для удобочитаемости)
+// )
+func someStrings(a, b int, words ...string) {
+	fmt.Println("Parameter:", a)
+	fmt.Println("Parameter:", b)
+	var result string
+	for _, word := range words {
+		result += word
+	}
+	fmt.Println("Result concat:", result)
+}
+
+//11. Передача слайса или использование variadic parameters?
+func sumVariadic(nums ...int) int {
+	var sum int
+	for _, val := range nums {
+		sum += val
+	}
+	return sum
+}
+
+func sumSlice(nums []int) int {
+	var sum int
+	for _, val := range nums {
+		sum += val
+	}
+	return sum
+}
+```
+
+```
+package main
+
+import "fmt"
+
+//1. Явные функции (в принципе любая функция в Go) - является
+//экземлпяром 1-го уровня (функцию можно присваивать в перменную, ее можно передавать в
+//качестве параметра и возвращать из других функций)
+
+//2. Возврат функции в качестве значения
+func calcAndReturnValidFunc(command string) func(a, b int) int {
+	if command == "addition" {
+		return func(a, b int) int { return a + b }
+	} else if command == "substraction" {
+		return func(a, b int) int { return a - b }
+	} else {
+		return func(a, b int) int { return a * b }
+	}
+}
+
+//3. Функция как парметр в другой функции
+func recieveFuncAndReturnValue(f func(a, b int) int) int {
+	var intVarA, intVarB int
+	intVarA = 100
+	intVarB = 200
+
+	return f(intVarA, intVarB)
+}
+
+func add(a, b int) int {
+	return a + b
+}
+func main() {
+
+	var command string
+	command = "substraction"
+	res := calcAndReturnValidFunc(command)
+	fmt.Println("Result with command :", command, "value:", res(10, 20))
+	fmt.Println(res(30, 40))
+
+	//4. Тип функции
+	fmt.Printf("Type of func is %T\n", res)
+	fmt.Printf("Type of calcAndReturnValidFunc is %T\n", calcAndReturnValidFunc)
+	//5. Тип функции в Go определяется как входными парамтерами, так и выходными
+
+	fmt.Println("recieveFuncAndReturnValue(add):", recieveFuncAndReturnValue(add))
+	fmt.Println(recieveFuncAndReturnValue(func(a, b int) int {
+		return a*a + b*b + 2*a*b
+	}))
+
+}
+```
+
+```
+package main
+
+import (
+	"fmt"
+	"math"
+)
+
+//1. Константы - это неизменяемые переменные, которые служат для:
+//	1) Более строго опнимания кода
+//	2) Для того, чтобы случайно не поменять значение (предполагается что значение констатнты не изменно)
+//	3) Для удобных преобразований
+
+const (
+	MAIN_PORT = "8001"
+)
+
+func main() {
+	//2. Объвление одной константы
+	const a = 10
+	fmt.Println(a)
+	//3. Объявление блока констант с областью видимости внутри функции main
+	const (
+		ipAddress string = "127.127.00.03"
+		port             = "8000"
+		dbName           = "postgres"
+	)
+	fmt.Println("ipAddress value:", ipAddress)
+	fmt.Println(checkPortIsValid())
+
+	//4. Константу никак нельзя поменять в ходе работы программы
+	// const b = 200
+	// b = 30
+
+	//5. Значения констант ДОЛЖНЫ БЫТЬ ИЗВЕСТНЫ на момент компиляции
+	var sqrt = math.Sqrt(25)
+	//const sqrt = math.Sqrt(25) //Нельзя присвоить в константу что-либо, что является результатом вызова функции, метода
+	fmt.Println("Var sqrt:", sqrt)
+
+	//6. Типизированные и нетипизированные константы
+	const ADMIN_EMAIL string = "admin@admin.com" // Указание типа - повышение читабельности кода
+
+	//7. Нетипизирвоанные константы и их профит
+	//При использовании нетипизированных констант мы разрешаем компилятору
+	//исопльзовать неявное приведение типов в момент присваивания значеий констант в перменные
+	const NUMERIC = 10
+	var numInt8 int8 = NUMERIC
+	var numInt32 int32 = NUMERIC
+	var numInt64 int64 = NUMERIC
+	var numFloat32 float32 = NUMERIC
+	var numComplex complex64 = NUMERIC
+
+	fmt.Printf("numInt8 value %v type %T\n", numInt8, numInt8)
+	fmt.Printf("%v + %v is %v\n", numInt8, NUMERIC, numInt8+NUMERIC)
+	fmt.Printf("numInt32 value %v type %T\n", numInt32, numInt32)
+	fmt.Printf("numInt64 value %v type %T\n", numInt64, numInt64)
+	fmt.Printf("numFloat32 value %v type %T\n", numFloat32, numFloat32)
+	fmt.Printf("numComplex value %v type %T\n", numComplex, numComplex)
+	//8. Константы в Go зашиваются в момент компиляции в RUNTIME программы и не выбрасываются до ее окончания
+
+}
+
+func checkPortIsValid() bool {
+	if MAIN_PORT == "8001" {
+		return true
+	}
+	return false
+}
+```
+
+
+
+```
+package main
+
+import "fmt"
+
+//1. Указатели - переменная, хранящая в качестве значения - адрес в памяти другой переменной
+
+func main() {
+
+	//2. Определение указателя на что-то
+	var variable int = 30
+	var pointer *int = &variable //&.... - операция взятия адреса в памяти
+	//Выше у нас создан указатель на переменную variable
+	//В pointer лежит 18293xcd000132 - это место в памяти, где хранится int значение 30
+	fmt.Printf("Type of pointer %T\n", pointer)
+	fmt.Printf("Value of pointer %v\n", pointer)
+
+	//3. А какое нулевое значение для указатели?
+	var zeroPointer *int //zeroValue имеет значение nil (это указатель в никуда)
+	fmt.Printf("Type %T and value %v\n", zeroPointer, zeroPointer)
+	if zeroPointer == nil {
+		zeroPointer = &variable
+		fmt.Printf("After initializatoin type %T and value %v\n", zeroPointer, zeroPointer)
+	}
+
+	//4. Разыменование указателя (получение значения): *pointer - возвращает значение, хранимое по адресу
+	var numericValue int = 32
+	pointerToNumeric := &numericValue
+
+	fmt.Printf("Value in numericValue is %v\nAddress is %v\n", *pointerToNumeric, pointerToNumeric)
+
+	//5. Создание указателей на нулевые занчения типов
+	// var zeroVar int
+	// var zeroPoint *int = &zeroVar
+	zeroPoint := new(int) // Создает под капотом zeroValue для int, и возвращает адрес, где этот 0 хранится
+	fmt.Printf("Value in *zeroPointer %v\nAddress is %v\n", *zeroPoint, zeroPoint)
+
+	//6. Изменение значения хранимого по адресу через указатель
+	zeroPointerToInt := new(int)
+	fmt.Printf("Addres is %v and Value in zeroPointerToInt is %v\n", zeroPointerToInt, *zeroPointerToInt)
+	*zeroPointerToInt += 40
+	fmt.Printf("Addres is %v and New Value in zeroPointerToInt is %v\n", zeroPointerToInt, *zeroPointerToInt)
+
+	b := 345
+	a := &b
+	c := &b
+	*a++
+	*c += 100
+	fmt.Println(b)
+	//7. Указательная арфиметика ОТСУТСТВУЕТ ПОЛНОСТЬЮ
+	// У вас на руках адрес одной ячейки - вы можете через этот адрес продвинуться в другие ячейки
+	//
+
+	//8. Передача указателей в функции
+	// Колоссальный прирост производительности засчет того, что передается не значение (которые должно копироваться)
+	// а передается лишь адрес в памяти, за которым уже хранится какое-то значение
+	sample := 1
+	//samplePointer := &sample
+
+	fmt.Println("Origin value of sample:", sample)
+	changeParam(&sample)
+	fmt.Println("After changing sample is:", sample)
+
+	//9. Возврат поинтера из функции (В С++ результат работы такого механизма - неопределен)
+	ptr1 := returnPointer()
+	ptr2 := returnPointer()
+	fmt.Printf("Ptr1: %T and address %v and value %v\n", ptr1, ptr1, *ptr1)
+	fmt.Printf("Ptr2: %T and address %v and value %v\n", ptr2, ptr2, *ptr2)
+
+}
+
+//9.1  Инициализация функции, возвращающей указатель
+func returnPointer() *int {
+	var numeric int = 321
+	return &numeric //В момент возврата Go перемещает данную переменную в кучу
+}
+
+//8.1 Определдение фукнции, принимающей параметр как указатель
+func changeParam(val *int) {
+	*val += 100
+}
+```
+
+
+
+```
+package main
+
+import "fmt"
+
+//1. Указатели на массивы. Почему так делать не надо
+func mutation(arr *[3]int) {
+	// (*arr)[1] = 909
+	// (*arr)[2] = 100000
+	//Можно написать и так, т.к. Go сам разыменует указатель на массив (из-за того,что функци принимает *arr)
+	arr[1] = 909
+	arr[2] = 10000
+}
+
+//2. Используйте лучше слайсы (это идеоматично с точки зрения Go)
+func mutationSlice(sls []int) {
+	sls[1] = 909
+	sls[2] = 10000
+}
+
+func main() {
+	arr := [3]int{1, 2, 3}
+	fmt.Println("Arr before mutation:", arr)
+	mutation(&arr)
+	fmt.Println("Arr after mutation:", arr)
+
+	newArr := [3]int{1, 2, 4}
+	fmt.Println("newArr before mutationSlice:", newArr)
+	mutationSlice(newArr[:])
+	fmt.Println("newArr after mutationSlcie:", newArr)
+}
+```
+
+
+
+```
+package main
+
+import "fmt"
+
+//1. Структура - заименованный набор полей (состояний), определяющий новый тип данных.
+
+//2. Определение структуры (явное определение)
+type Student struct {
+	firstName string
+	lastName  string
+	age       int
+}
+
+//3. Если имеется ряд состояний одного типа, можно сделать так
+type AnotherStudent struct {
+	firstName, lastName, groupName string
+	age, courseNumber              int
+}
+
+//11. Структура с анонимными полями
+type Human struct {
+	firstName string
+	lastName  string
+	string
+	int
+	bool
+}
+
+func PrintStudent(std Student) {
+	fmt.Println("==================")
+	fmt.Println("FirstName:", std.firstName)
+	fmt.Println("LastName:", std.lastName)
+	fmt.Println("Age:", std.age)
+}
+
+func main() {
+
+	//4. Создание представителей структуры
+	stud1 := Student{
+		firstName: "Fedya",
+		age:       21,
+		lastName:  "Petrov",
+	}
+	PrintStudent(stud1)
+	stud2 := Student{"Petya", "Ivanov", 19} // Порядок указания свойств - такой же как в структуре
+	PrintStudent(stud2)
+
+	//5. Что если не все поля структуры определить?
+	stud3 := Student{
+		firstName: "Vasya",
+	}
+	PrintStudent(stud3)
+
+	//6. Анонимные структуры (структура без имени)
+	anonStudent := struct {
+		age           int
+		groupID       int
+		proffesorName string
+	}{
+		age:           23,
+		groupID:       2,
+		proffesorName: "Alexeev",
+	}
+	fmt.Println("AnonStudent:", anonStudent)
+
+	//7. Доступ к состояниям и их модфикация
+	studVova := Student{"Vova", "Ivanov", 19}
+	fmt.Println("firstName:", studVova.firstName)
+	fmt.Println("lastName:", studVova.lastName)
+	fmt.Println("age:", studVova.age)
+	studVova.age += 2
+	fmt.Println("new age:", studVova.age)
+
+	//8. Инициализация пустой структуры
+	emptyStudent1 := Student{}
+	var emptyStudent2 Student
+	PrintStudent(emptyStudent1)
+	PrintStudent(emptyStudent2)
+
+	//9. Указатели на экземпляры структур
+	studPointer := &Student{
+		firstName: "Igor",
+		lastName:  "Sidorov",
+		age:       22,
+	}
+	fmt.Println("Value studPointer:", studPointer)
+	secondPointer := studPointer
+	(*secondPointer).age += 20
+	fmt.Println("Value afterPointerModify:", studPointer)
+	studPointerNew := new(Student)
+	fmt.Println(studPointerNew)
+
+	//10. Работа с доступ к полям структур через указатель
+	fmt.Println("Age via (*...).age:", (*studPointer).age)
+	fmt.Println("Age via .age:", studPointer.age) //Неявно происходит разыменование указателя studpointer и запрос соотв поля
+
+	//12. Создание экземпляра с анонимными полями структуры
+	human := &Human{
+		firstName: "Bob",
+		lastName:  "Johnson",
+		string:    "Additional Info",
+		int:       -1,
+		bool:      true,
+	}
+
+	fmt.Println(human)
+	fmt.Println("Anon field string:", human.string)
+}
+```
+
+
+
+```
+package main
+
+import "fmt"
+
+//1. Вложенные структуры (вложение структур). Это использование одной структуры, как тип поля
+//в другйо структуре
+type University struct {
+	age       int
+	yearBased int
+	infoShort string
+	infoLong  string
+}
+
+type Student struct {
+	firstName  string
+	lastName   string
+	university University
+}
+
+//4. Встроенные структуры (когда мы добавляем поля одной структуры к другой)
+type Professor struct {
+	firstName string
+	lastName  string
+	age       int
+	greatWork string
+	//papers     map[string]string - добавление этого поля делает структуру несравнимой
+	University // В этом месте происходит добавление всех полей структуры Uni в Professor
+}
+
+func main() {
+	//2. Создание экземпляров структур с вложением
+	stud := Student{
+		firstName: "Fedya",
+		lastName:  "Petrov",
+		university: University{
+			yearBased: 1991,
+			infoShort: "cool University",
+			infoLong:  "very cool University",
+		},
+	}
+
+	//3. Получение доступа к вложенным полям структур
+	fmt.Println("FirstName:", stud.firstName)
+	fmt.Println("LastName:", stud.lastName)
+	fmt.Println("Year based Uni:", stud.university.yearBased)
+	fmt.Println("Long info:", stud.university.infoLong)
+
+	//5. Создание экземпляра с встраиванием структур
+	prof := Professor{
+		firstName: "Anatoly",
+		lastName:  "Smirnov",
+		age:       125,
+		greatWork: "Ultimate C programming",
+		University: University{
+			yearBased: 1734,
+			infoShort: "short Info",
+			age:       2021 - 1734,
+		},
+	}
+	//6. Обращение к состояниям с встроенной структурой
+	fmt.Println("FirstName:", prof.firstName)
+	fmt.Println("Year based:", prof.yearBased)
+	fmt.Println("Info Short:", prof.infoShort)
+	fmt.Println("Age:", prof.University.age) //prof.age - получим доступ к полю ВЫШЕЛЕЖАЩЕЙ СТРУКТУРЫ
+
+	//7. Сравнение экземпляров ==
+	//При сравнении экзмеляров происходит сравнение всех их полей друг с другом
+	profLeft := Professor{}
+	profRight := Professor{}
+
+	fmt.Println(profLeft == profRight)
+	//8. Если ХОТЯ БЫ ОДНО ИЗ ПОЛЕЙ СТРУКТУР - НЕ СРАВНИМО - то и вся структура несравнима
+}
+```
+<!-- 07 Lec18 -->
 
 
 ```
 
 ```
 
-```
+
 
 ```
 
 ```
 
-```
+
 
 ```
 
 ```
+
+
+
+```
+
+```
+
+
+
+```
+
+```
+
+
 
 
 

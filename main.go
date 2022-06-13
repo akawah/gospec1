@@ -1,9 +1,41 @@
 package main
 
+import "fmt"
+
 func main() {
 
 	/////////////////////////////////// 5
 
+	name := "Hello world!"
+	// fmt.Println(name)
+	fmt.Println(name)
+	for i := 0; i < len(name); i++ {
+		fmt.Printf("%x ", name[i])
+	}
+	fmt.Println()
+
+	word := "Привет, мир!"
+	for i := 0; i < len(word); i++ {
+		fmt.Printf("%c ", word[i])
+	}
+	fmt.Println()
+
+	runeSlice := []rune(word)
+	for i := 0; i < len(runeSlice); i++ {
+		fmt.Printf("%c ", runeSlice[i])
+	}
+	fmt.Println()
+	fmt.Printf("%c\n", runeSlice[2])
+
+	for id, runeVal := range runeSlice {
+		fmt.Printf("%d - %c\n", id, runeVal)
+	}
+
+	fmt.Println(string(runeSlice))
+	fmt.Println(string(word))
+	wSl := string(word)
+
+	fmt.Println(wSl[3])
 	/*
 			var name string
 			input := bufio.NewScanner(os.Stdin)
@@ -22,14 +54,7 @@ func main() {
 		fmt.Println(num)
 	*/
 	/*
-		word := "Привет, мир!"
 
-		fmt.Println(word)
-
-		for i := 0; i < len(word); i++ {
-			fmt.Printf("%x ", word[i])
-		}
-		fmt.Println()
 
 		for i := 0; i < len(word); i++ {
 			fmt.Printf("%c ", word[i])
